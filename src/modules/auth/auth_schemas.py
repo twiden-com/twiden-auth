@@ -18,15 +18,13 @@ class MetaData(BaseModel):
     org_id: str = ""
     login_type: LoginType
     
-    # Pydantic automatically validates enums, but if you need custom validation:
-    
-    @field_validator('flow')
-    @classmethod
-    def validate_flow(cls, v):
-        # Only validate specific enum values if needed
-        if v not in [FlowType.C2B, FlowType.B2B]:
-            raise ValueError(f"Flow must be either {FlowType.C2B.value} or {FlowType.B2B.value}")
-        return v
+    # @field_validator('flow')
+    # @classmethod
+    # def validate_flow(cls, v):
+    #     # Only validate specific enum values if needed
+    #     if v not in [FlowType.C2B, FlowType.B2B]:
+    #         raise ValueError(f"Flow must be either {FlowType.C2B.value} or {FlowType.B2B.value}")
+    #     return v
         
 
 

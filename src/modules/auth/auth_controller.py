@@ -12,9 +12,9 @@ from src.modules.profiles.profile_schemas import ProfileCreateRequest
 class AuthController:
 
     def __init__(self,
-                auth_service: AuthService,
-                profile_controller: ProfileController, 
-                organization_controller: OrganizationController
+                    auth_service: AuthService,
+                    profile_controller: ProfileController, 
+                    organization_controller: OrganizationController
                 ):
         self._auth_service            = auth_service
         self._profile_controller      = profile_controller
@@ -23,6 +23,10 @@ class AuthController:
 
     def signup(self, request: SignUpRequest):
         try:
+            org_id = request.meta_data.org_id
+            user_org_email = request.email.split('@')[0] + '+' + org_id + request.email.split('@')[1]
+            
+
             user = self._auth_service.sign_up(request.email, request.password)
             
             # profile =  self._profile_controller.create_profile(
