@@ -7,6 +7,6 @@ class OrganizationController:
         self._organization_service = organization_service
 
 
-    def get_user_memberhip(self, request: UserMembershipRequest):
-        pass
+    # def get_user_memberhip(self, request: UserMembershipRequest):
+    #     pass
 

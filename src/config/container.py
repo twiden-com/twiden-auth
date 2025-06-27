@@ -1,4 +1,4 @@
-from supabase import Client
+from supabase import Client, AsyncClient
 from typing import Optional
 from src.config.database import get_db_client
 from src.modules.profiles.profile_controller import ProfileController
@@ -18,7 +18,7 @@ from src.modules.auth.auth_repository import AuthRepository
 
 class DIContainer:
     def __init__(self):
-        self._db_client: Client = get_db_client()
+        self._db_client: AsyncClient = None
         self._profile_controller : Optional[ProfileController] = None
         self._profile_service    : Optional[ProfileService] = None
         self._profile_repository : Optional[ProfileRepository] = None
@@ -29,68 +29,70 @@ class DIContainer:
         self._org_service        : Optional[OrganizationService] = None
         self._org_repository     : Optional[OrganizationRepository] = None
 
-    def get_db_client(self) -> Client:
+    async def get_db_client(self) -> AsyncClient:  # Make it async again
+        if self._db_client is None:
+            self._db_client = await get_db_client()  # Now we need await
         return self._db_client
     
     # =====================================================
     # USER DI - (USER CRUD SERVICE)
     # =====================================================
     
-    def get_profile_controller(self) -> ProfileController:
+    async def get_profile_controller(self) -> ProfileController:
         if self._profile_controller is None:
-           self._profile_controller = ProfileController(self.get_profile_service())
+           self._profile_controller = ProfileController(await self.get_profile_service())
         return self._profile_controller
     
-    def get_profile_service(self) -> ProfileService:
+    async def get_profile_service(self) -> ProfileService:
         if self._profile_service is None:
-            self._profile_service = ProfileService(self.get_profile_repository())
+            self._profile_service = ProfileService(await self.get_profile_repository())
         return self._profile_service
     
-    def get_profile_repository(self) -> ProfileRepository:
+    async def get_profile_repository(self) -> ProfileRepository:
         if self._profile_repository is None:
-            self._profile_repository = ProfileRepository(self.get_db_client())
+            self._profile_repository = ProfileRepository(await self.get_db_client())  # Add await back
         return self._profile_repository
     
     # =====================================================
     # AUTH DI - (ORCHESTRATION SERVICE)
     # =====================================================
     
-    def get_auth_controller(self) -> AuthController:
+    async def get_auth_controller(self) -> AuthController:
         if self._auth_controller is None:
            self._auth_controller = AuthController(
-                self.get_auth_service(), 
-                self.get_profile_controller(), 
-                self.get_org_controller()
+                await self.get_auth_service(), 
+                await self.get_profile_controller(), 
+                await self.get_org_controller()
                )
         return self._auth_controller
     
-    def get_auth_service(self) -> AuthService:
+    async def get_auth_service(self) -> AuthService:
         if self._auth_service is None:
-           self._auth_service = AuthService(self.get_auth_repository())
+           self._auth_service = AuthService(await self.get_auth_repository())
         return self._auth_service
     
-    def get_auth_repository(self) -> AuthRepository:
+    async def get_auth_repository(self) -> AuthRepository:
         if self._auth_repository is None:
-           self._auth_repository = AuthRepository(self.get_db_client())
+           self._auth_repository = AuthRepository(await self.get_db_client())  # Add await back
         return self._auth_repository
     
     # =====================================================
     # ORGANIZATION DI - (ORG CRUD SERVICE)
     # =====================================================
     
-    def get_org_controller(self) -> OrganizationController:
+    async def get_org_controller(self) -> OrganizationController:
         if self._org_controller is None:
-           self._org_controller = OrganizationController(self.get_org_service())
+           self._org_controller = OrganizationController(await self.get_org_service())
         return self._org_controller
     
-    def get_org_service(self) -> OrganizationService:
+    async def get_org_service(self) -> OrganizationService:
         if self._org_service is None:
-            self._org_service = OrganizationService(self.get_org_repository())
+            self._org_service = OrganizationService(await self.get_org_repository())
         return self._org_service
     
-    def get_org_repository(self) -> OrganizationRepository:
+    async def get_org_repository(self) -> OrganizationRepository:
         if self._org_repository is None:
-            self._org_repository = OrganizationRepository(self.get_db_client())
+            self._org_repository = OrganizationRepository(await self.get_db_client())  # Add await back
         return self._org_repository
     
 

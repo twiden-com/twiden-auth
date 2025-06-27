@@ -15,7 +15,7 @@ class SignUpRequest(BaseModel):
 
 class MetaData(BaseModel):
     flow: FlowType
-    org_id: str = ""
+    org_id: str 
     login_type: LoginType
     
     # @field_validator('flow')

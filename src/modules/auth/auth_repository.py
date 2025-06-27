@@ -1,13 +1,12 @@
 # from src.config.database import Client
-from supabase import Client
+from supabase import AsyncClient
 
 
 class AuthRepository:
     
-    def __init__(self, db_client: Client):
+    def __init__(self, db_client: AsyncClient):
         self._db_client = db_client
 
-    def signup(self, email: str, password: str):
-        response =  self._db_client.auth.sign_up({'email': email, 'password': password})
-        self._db_client.auth.
-        return response.user
+    async def signup(self, email: str, password: str):
+        response =  await self._db_client.auth.sign_up({'email': email, 'password': password})
+        return response

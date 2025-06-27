@@ -7,14 +7,17 @@ router = APIRouter(prefix="/v1/auth", tags=["Authentication"])
 
 @router.post(
     "/signup",
-    response_model=JSONResponse,
+    response_model=dict,
     status_code=status.HTTP_201_CREATED,
     summary="Sign up a new user",
     description="Create a new user account with email and password authentication"
 )
-def signup(
+async def signup(
     signup_request  : SignUpRequest,
     auth_controller : AuthController = Depends(get_auth_controller)
 ):  
-    return auth_controller.signup(signup_request)
+    return await auth_controller.signup(signup_request)
 
+@router.get("/helo")
+async def signup2():
+    return "hello"

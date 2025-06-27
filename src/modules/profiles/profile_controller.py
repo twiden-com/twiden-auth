@@ -7,6 +7,6 @@ class ProfileController:
     def __init__(self, profile_service):
         self._profile_service = profile_service
     
-    def create_profile(self, request: ProfileCreateRequest):
-        pass
+    # def create_profile(self, request: ProfileCreateRequest):
+    #     pass
         

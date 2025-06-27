@@ -21,13 +21,11 @@ class AuthController:
         self._organization_controller = organization_controller
 
 
-    def signup(self, request: SignUpRequest):
+    async def signup(self, request: SignUpRequest):
         try:
             org_id = request.meta_data.org_id
-            user_org_email = request.email.split('@')[0] + '+' + org_id + request.email.split('@')[1]
-            
-
-            user = self._auth_service.sign_up(request.email, request.password)
+            user_org_email = f"{request.email.split('@')[0]}+{org_id}@{request.email.split('@')[1]}"
+            response = await self._auth_service.sign_up(user_org_email, request.password)
             
             # profile =  self._profile_controller.create_profile(
             #             ProfileCreateRequest(
@@ -38,10 +36,10 @@ class AuthController:
             #                 gender     = request.gender
             #             )
             #         )
-            return user
+            return response.user
         except UserAlreadyExistsException as e:
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=e.message)
         except ValueError as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
         except Exception as e:
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error")
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))

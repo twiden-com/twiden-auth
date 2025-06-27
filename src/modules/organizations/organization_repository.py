@@ -1,7 +1,8 @@
-from src.config.database import Client
+# from src.config.database import Client
 
 class OrganizationRepository:
 
-    def __init__(self, db_client: Client):
+    def __init__(self, d):
+        self.d = d
         
         pass
