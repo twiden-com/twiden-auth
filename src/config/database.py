@@ -1,32 +1,3 @@
-# import os
-# import asyncio
-# from supabase import acreate_client, AsyncClient
-# from src.config.settings import settings
-
-# async def create_supabase() -> AsyncClient:
-#     supabase: AsyncClient = await acreate_client(settings.supabase_url, settings.supabase_key)
-#     return supabase
-
-# async def create_admin_supabase() -> AsyncClient:
-#     supabase: AsyncClient = await acreate_client(settings.supabase_url, settings.supabase_service_key)
-#     return supabase
-
-# # Global client variable
-# _db_client: AsyncClient = None
-# _db_admin_client: AsyncClient = None
-
-# async def get_db_client() -> AsyncClient:
-#     global _db_client
-#     if _db_client is None:
-#         _db_client = await create_supabase()
-#     return _db_client
-
-# async def get_admin_db_client() -> AsyncClient:
-#     global _db_admin_client
-#     if _db_admin_client is None:
-#         _db_admin_client = await create_admin_supabase()
-#     return _db_admin_client
-
 import asyncio
 from supabase import acreate_client, AsyncClient
 from supabase.lib.client_options import ClientOptions
