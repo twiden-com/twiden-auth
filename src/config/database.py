@@ -1,31 +1,91 @@
-import os
+# import os
+# import asyncio
+# from supabase import acreate_client, AsyncClient
+# from src.config.settings import settings
+
+# async def create_supabase() -> AsyncClient:
+#     supabase: AsyncClient = await acreate_client(settings.supabase_url, settings.supabase_key)
+#     return supabase
+
+# async def create_admin_supabase() -> AsyncClient:
+#     supabase: AsyncClient = await acreate_client(settings.supabase_url, settings.supabase_service_key)
+#     return supabase
+
+# # Global client variable
+# _db_client: AsyncClient = None
+# _db_admin_client: AsyncClient = None
+
+# async def get_db_client() -> AsyncClient:
+#     global _db_client
+#     if _db_client is None:
+#         _db_client = await create_supabase()
+#     return _db_client
+
+# async def get_admin_db_client() -> AsyncClient:
+#     global _db_admin_client
+#     if _db_admin_client is None:
+#         _db_admin_client = await create_admin_supabase()
+#     return _db_admin_client
+
 import asyncio
 from supabase import acreate_client, AsyncClient
-
-url = "https://zwbyjsdlpdwubkbriwea.supabase.co"
-api_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3Ynlqc2RscGR3dWJrYnJpd2VhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA0NzIxMDEsImV4cCI6MjA2NjA0ODEwMX0.aLytDhKgdbDO60M8_xCtZVxUjCQJ1CQB_LAdqklib4c"
-service_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3Ynlqc2RscGR3dWJrYnJpd2VhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MDQ3MjEwMSwiZXhwIjoyMDY2MDQ4MTAxfQ.Yb8f2-WJC5zpt7vIBII5fVXvcMvW_jaWu1ScY_AY46A"
+from supabase.lib.client_options import ClientOptions
+from src.config.settings import settings
 
 async def create_supabase() -> AsyncClient:
-    supabase: AsyncClient = await acreate_client(url, api_key)
+    supabase: AsyncClient = await acreate_client(
+        settings.supabase_url, 
+        settings.supabase_key,
+        options=ClientOptions(
+            auto_refresh_token=False,
+            persist_session=False,
+            storage=None,
+            flow_type="implicit"
+        )
+    )
     return supabase
 
 async def create_admin_supabase() -> AsyncClient:
-    supabase: AsyncClient = await acreate_client(url, service_key)
+    supabase: AsyncClient = await acreate_client(
+        settings.supabase_url, 
+        settings.supabase_service_key,
+        options=ClientOptions(
+            auto_refresh_token=False,
+            persist_session=False,
+            storage=None,
+            flow_type="implicit"
+        )
+    )
     return supabase
 
-# Global client variable
+# Global clients
 _db_client: AsyncClient = None
 _db_admin_client: AsyncClient = None
+_client_lock = asyncio.Lock()
 
 async def get_db_client() -> AsyncClient:
     global _db_client
     if _db_client is None:
-        _db_client = await create_supabase()
+        async with _client_lock:
+            if _db_client is None:
+                _db_client = await create_supabase()
     return _db_client
 
 async def get_admin_db_client() -> AsyncClient:
     global _db_admin_client
     if _db_admin_client is None:
-        _db_admin_client = await create_admin_supabase()
+        async with _client_lock:
+            if _db_admin_client is None:
+                _db_admin_client = await create_admin_supabase()
     return _db_admin_client
+
+async def close_db_connections():
+    global _db_client, _db_admin_client
+    
+    if _db_client:
+        await _db_client.auth.sign_out()
+        _db_client = None
+    
+    if _db_admin_client:
+        await _db_admin_client.auth.sign_out()
+        _db_admin_client = None

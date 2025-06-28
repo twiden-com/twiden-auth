@@ -1,12 +1,12 @@
+from pydantic_settings import BaseSettings
 
+class Settings(BaseSettings):
+    supabase_url: str
+    supabase_key: str
+    supabase_service_key: str
+    environment: str = "dev"
+    port: int = 8000
+    log_level: str = 'info'
+    model_config = {"env_file": ".env"}
 
-class Settings:
-    host = ""
-    is_development = True
-    port = 8080
-    log_level = 'DEBUG'
-    is_production = False
-    environment='test'
-
-def get_settings():
-    return Settings()
+settings = Settings()

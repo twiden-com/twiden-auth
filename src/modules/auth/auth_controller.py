@@ -9,7 +9,7 @@ from src.modules.organizations.organization_controller import OrganizationContro
 from src.modules.profiles.profile_schemas import ProfileCreateRequest, ProfileGetRequest
 from src.utils.rollback_manager import DBTransaction
 from src.utils.user_utils import generate_user_org_email
-
+import asyncio
 
 class AuthController:
 
@@ -87,5 +87,3 @@ class AuthController:
             )
         except Exception as e:
             raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, str(e))
-
-        
