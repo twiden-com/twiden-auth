@@ -18,3 +18,6 @@ class AuthRepository:
     
     async def delete_user(self, user_id: str):
         return await self._db_admin_client.auth.admin.delete_user(user_id)
+    
+    async def get_signed_in_user(self, access_token: str):
+        return await self._db_client.auth.get_user(access_token)

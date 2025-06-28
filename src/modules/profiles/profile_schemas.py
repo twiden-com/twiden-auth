@@ -16,6 +16,10 @@ class ProfileCreateRequest(BaseModel):
    gender     : str      = Field(None, min_length=1, max_length=20)
    role       : str      = Field(... , min_length=1, max_length=100)
 
+class ProfileGetRequest(BaseModel):
+   model_config   = ConfigDict(extra='forbid')
+
+   user_id    : str   = Field(..., min_length=1, max_length=100)
 
 class ProfileDeleteRequest(BaseModel):
    model_config   = ConfigDict(extra='forbid')

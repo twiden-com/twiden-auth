@@ -13,3 +13,6 @@ class AuthService:
     
     async def delete_user(self, user_id: str):
         return await self._auth_repository.delete_user(user_id)
+    
+    async def get_signed_in_user(self, access_token: str):
+        return await self._auth_repository.get_signed_in_user(access_token)

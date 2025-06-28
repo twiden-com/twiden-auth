@@ -39,3 +39,14 @@ class SignInResponse(BaseModel):
     model_config = ConfigDict(extra='forbid')
 
    
+class GetSignedInUserRequest(BaseModel):
+    access_token  : str = Field(...)
+
+    model_config = ConfigDict(extra='forbid')
+
+
+class GetSignedInUserResponse(BaseModel):
+    user    : Dict[str, Any]  = Field(...)
+    profile : Dict[str, Any]  = Field(...)
+    
+    model_config = ConfigDict(extra='forbid')

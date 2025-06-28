@@ -11,6 +11,10 @@ class ProfileRepository:
         response = await self._db_client.table(self._table_name).insert(profile_data).execute()
         return response
     
+    async def get_by_user_id(self, user_id: str):
+        response = await self._db_client.table(self._table_name).select('*').eq('user_id', user_id).execute()
+        return response.data[0]
+    
     async def save_as_admin(self, profile_data: dict):
         response = await self._db_admin_client.table(self._table_name).insert(profile_data).execute()
         return response.data[0]

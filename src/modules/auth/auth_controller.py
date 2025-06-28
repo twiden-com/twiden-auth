@@ -1,14 +1,15 @@
 from fastapi import HTTPException, status
 from src.modules.auth.auth_exceptions import InvalidCredentialsException, UserAlreadyExistsException, UserNotActiveException, OrgNotFoundException
-from src.modules.auth.auth_schemas import SignUpRequest, SignUpResponse, SignInRequest, SignInResponse
+from src.modules.auth.auth_schemas import GetSignedInUserRequest, GetSignedInUserResponse, SignUpRequest, SignUpResponse, SignInRequest, SignInResponse
 from src.modules.auth.auth_enums import UserRole
 from src.modules.profiles.profile_enums import UserStatus
 from src.modules.auth.auth_service import AuthService
 from src.modules.profiles.profile_controller import ProfileController
 from src.modules.organizations.organization_controller import OrganizationController
-from src.modules.profiles.profile_schemas import ProfileCreateRequest
+from src.modules.profiles.profile_schemas import ProfileCreateRequest, ProfileGetRequest
 from src.utils.rollback_manager import DBTransaction
 from src.utils.user_utils import generate_user_org_email
+
 
 class AuthController:
 
@@ -69,6 +70,20 @@ class AuthController:
                 access_token  = session.access_token,
                 refresh_token = session.refresh_token,
                 expires_at = session.expires_at
+            )
+        except Exception as e:
+            raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, str(e))
+        
+    
+    async def get_signed_in_user(self, request: GetSignedInUserRequest):
+        try:
+            response = await self._auth_service.get_signed_in_user(request.access_token)
+            user    = response.user
+            profile = await self._profile_controller.get_profile(ProfileGetRequest( user_id=user.id))
+
+            return GetSignedInUserResponse(
+                user    = user.model_dump(),
+                profile = profile
             )
         except Exception as e:
             raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, str(e))

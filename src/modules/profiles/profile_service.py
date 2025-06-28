@@ -12,6 +12,9 @@ class ProfileService:
             return await self._profile_repository.save_as_admin(profile.to_dict())
         return await self._profile_repository.save(profile.to_dict())
     
+    async def get_profile(self, user_id: str):
+        return await self._profile_repository.get_by_user_id(user_id)
+    
     async def delete_profile(self, profile_id: str, as_admin: bool = False):
         if as_admin:
             return await self._profile_repository.delete_as_admin(profile_id)
