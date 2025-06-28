@@ -7,6 +7,7 @@ import uuid
 @dataclass
 class Profile:
     user_id: uuid.UUID
+    org_id: uuid.UUID
     email: str
     role: str 
     status: str
@@ -56,6 +57,8 @@ class Profile:
         data = asdict(self)
     
         data['user_id'] = str(data['user_id'])
+        data['org_id']  = str(data['org_id'])
+        
         # Convert datetime to ISO string
         if data['created_at']:
             data['created_at'] = data['created_at'].isoformat()

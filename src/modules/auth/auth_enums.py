@@ -9,3 +9,8 @@ class LoginType(str, Enum):
     GOOGLE = "google" 
     GITHUB = "github"
     MICROSOFT = "microsoft"
+
+class UserRole(str, Enum):
+    SUPER_ADMIN = 'superadmin'
+    ADMIN = 'admin'
+    MEMBER = 'member'

@@ -26,3 +26,8 @@ class UserNotActiveException(AuthenticationException):
     """Exception when user is not active"""
     def __init__(self, user_id: str):
         super().__init__(f"User {user_id} is not active")
+
+
+class OrgNotFoundException(AuthenticationException):
+    def __init__(self, org_id: str):
+        super().__init__(f"Org {org_id} is not found")

@@ -1,6 +1,6 @@
 from supabase import Client, AsyncClient
 from typing import Optional
-from src.config.database import get_db_client
+from src.config.database import get_db_client, get_admin_db_client
 from src.modules.profiles.profile_controller import ProfileController
 from src.modules.auth.auth_controller import AuthController
 
@@ -19,6 +19,7 @@ from src.modules.auth.auth_repository import AuthRepository
 class DIContainer:
     def __init__(self):
         self._db_client: AsyncClient = None
+        self._db_admin_client: AsyncClient = None
         self._profile_controller : Optional[ProfileController] = None
         self._profile_service    : Optional[ProfileService] = None
         self._profile_repository : Optional[ProfileRepository] = None
@@ -33,6 +34,11 @@ class DIContainer:
         if self._db_client is None:
             self._db_client = await get_db_client()  # Now we need await
         return self._db_client
+    
+    async def get_db_admin_client(self) -> AsyncClient:
+        if self._db_admin_client is None:
+            self._db_admin_client = await get_admin_db_client()
+        return self._db_admin_client
     
     # =====================================================
     # USER DI - (USER CRUD SERVICE)
@@ -50,7 +56,7 @@ class DIContainer:
     
     async def get_profile_repository(self) -> ProfileRepository:
         if self._profile_repository is None:
-            self._profile_repository = ProfileRepository(await self.get_db_client())  # Add await back
+            self._profile_repository = ProfileRepository(await self.get_db_client(), await self.get_db_admin_client())  # Add await back
         return self._profile_repository
     
     # =====================================================
@@ -73,7 +79,7 @@ class DIContainer:
     
     async def get_auth_repository(self) -> AuthRepository:
         if self._auth_repository is None:
-           self._auth_repository = AuthRepository(await self.get_db_client())  # Add await back
+           self._auth_repository = AuthRepository(await self.get_db_client(), await self.get_db_admin_client())  # Add await back
         return self._auth_repository
     
     # =====================================================
