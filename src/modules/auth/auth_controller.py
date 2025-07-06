@@ -44,7 +44,7 @@ class AuthController:
                         ),
                         as_admin=True
                     )
-            tx.add_rollback(self._profile_controller.delete_user, profile.id)
+            tx.add_rollback(self._profile_controller.delete_user, profile.get('id'))
             
             #3. RETURN RESPONSE
             return SignUpResponse(
